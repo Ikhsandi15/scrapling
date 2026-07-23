@@ -16,5 +16,5 @@ RUN python -m patchright install chromium
 # Expose Port 5000
 EXPOSE 5000
 
-# Command jalankan REST API microservice (gunakan -u agar log langsung muncul di docker logs)
-CMD ["python", "-u", "server.py"]
+# Command jalankan REST API microservice
+CMD ["python", "server.py"]
