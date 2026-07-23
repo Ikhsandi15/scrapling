@@ -32,11 +32,13 @@ class TikiScraperPool:
         start_time = time.time()
         
         # MAPPING NEGARA: Mengubah nama negara (dari DB) ke kode ID TIKI
-        country_map = {
-            "SINGAPORE": "173",
-            "SINGAPURA": "173",
-            "MALAYSIA": "174"
-        }
+        country_map = {}
+        try:
+            with open("tiki_country_map.json", "r") as f:
+                country_map = json.load(f)
+        except Exception as e:
+            print(f"[TikiScraperPool Error] Gagal baca map negara: {e}")
+            
         dest_upper = str(dest_code).strip().upper()
         if dest_upper in country_map:
             dest_code = country_map[dest_upper]
