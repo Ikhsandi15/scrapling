@@ -13,7 +13,10 @@ class TikiScraperPool:
         if not self.page or self.page.is_closed():
             print("[TikiScraperPool] Inisialisasi Pre-loaded Playwright Browser...")
             self.playwright = sync_playwright().start()
-            self.browser = self.playwright.chromium.launch(headless=True)
+            self.browser = self.playwright.chromium.launch(
+                headless=True,
+                args=["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"]
+            )
             self.context = self.browser.new_context()
             self.page = self.context.new_page()
             
