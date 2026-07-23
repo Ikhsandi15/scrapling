@@ -4,15 +4,14 @@ FROM mcr.microsoft.com/playwright/python:v1.44.0-jammy
 # Set working directory
 WORKDIR /app
 
-# Copy requirements & install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy repo files
+COPY . .
+
+# Install Scrapling package dengan semua dependensi fetchers ([fetchers])
+RUN pip install --no-cache-dir ".[fetchers]"
 
 # Install Playwright / Patchright browser binaries
 RUN python -m patchright install chromium
-
-# Copy aplikasi scraper
-COPY . .
 
 # Expose Port 5000
 EXPOSE 5000
