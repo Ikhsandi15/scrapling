@@ -31,6 +31,17 @@ class TikiScraperPool:
     def get_tariff(self, from_name: str, origin_code: str, to_name: str, dest_code: str, weight: int = 1):
         start_time = time.time()
         
+        # MAPPING NEGARA: Mengubah nama negara (dari DB) ke kode ID TIKI
+        country_map = {
+            "SINGAPORE": "173",
+            "SINGAPURA": "173",
+            "MALAYSIA": "174"
+        }
+        dest_upper = str(dest_code).strip().upper()
+        if dest_upper in country_map:
+            dest_code = country_map[dest_upper]
+            to_name = dest_upper
+        
         try:
             self.initialize()
         except Exception as e:
