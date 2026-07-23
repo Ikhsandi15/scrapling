@@ -81,8 +81,8 @@ class TikiScraperPool:
         except Exception as e:
             print(f"[TikiScraperPool Error] Evaluate DOM error: {e}")
 
-        # Polling respons API TIKI secara instan
-        for _ in range(40): # max 2 detik
+        # Polling respons API TIKI secara instan (max 5 detik, break langsung saat data tertangkap)
+        for _ in range(100):
             if captured_json:
                 break
             self.page.wait_for_timeout(50)
