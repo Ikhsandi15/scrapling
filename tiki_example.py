@@ -31,6 +31,10 @@ class TikiScraperPool:
     def get_tariff(self, from_name: str, origin_code: str, to_name: str, dest_code: str, weight: int = 1):
         start_time = time.time()
         
+        # MENGGUNAKAN MODE DINAMIS (NGETIK): tidak perlu mapping lagi
+        # Script akan mengetik to_name di kolom input, lalu TIKI akan memunculkan dropdown
+        # yang berisi kode rahasianya (dest_code)
+
         try:
             self.initialize()
         except Exception as e:
@@ -49,35 +53,33 @@ class TikiScraperPool:
         # Pasang listener respons
         self.page.on("response", handle_response)
 
-        # Execute Direct DOM Injection
+        # Execute DOM Injection untuk Origin dan Weight
         try:
             self.page.evaluate("""
                 (args) => {
                     const orig = document.querySelector('#origin');
                     if (orig) orig.value = args.origin_code;
-                    
-                    const dest = document.querySelector('#dest');
-                    if (dest) dest.value = args.dest_code;
 
                     const fromInput = document.querySelector('#from_');
                     if (fromInput) fromInput.value = args.from_name;
 
-                    const toInput = document.querySelector('#to_');
-                    if (toInput) toInput.value = args.to_name;
-
                     const beratInput = document.querySelector('#berat_');
                     if (beratInput) beratInput.value = args.weight;
-
-                    const btn = document.querySelector('.tracking-btn-cek-ongkir');
-                    if (btn) btn.click();
                 }
             """, {
                 "from_name": from_name,
                 "origin_code": origin_code,
-                "to_name": to_name,
-                "dest_code": dest_code,
                 "weight": str(weight)
             })
+
+            # Eksekusi Dinamis untuk Destination (Ngetik & Klik Autocomplete)
+            self.page.fill('#to_', to_name)
+            self.page.wait_for_selector('.tt-suggestion', timeout=4000)
+            self.page.click('.tt-suggestion:first-child')
+            
+            # Klik tombol cek ongkir
+            self.page.click('.tracking-btn-cek-ongkir')
+
         except Exception as e:
             print(f"[TikiScraperPool Error] Evaluate DOM error: {e}")
 
